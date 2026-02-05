@@ -74,9 +74,9 @@ const EmployeeForm = ({ employee, onClose }) => {
             };
 
             if (employee) {
-                await dispatch(updateEmployee({ id: employee.id, data: finalData }));
+                dispatch(updateEmployee({ id: employee.id, data: finalData }));
             } else {
-                await dispatch(addEmployee(finalData));
+                dispatch(addEmployee(finalData));
             }
 
             onClose();

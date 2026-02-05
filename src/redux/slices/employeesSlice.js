@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 
-const API_URL = 'http://localhost:5001/employees';
+const API_URL = 'http://localhost:3000/employees';
 
 // Generate unique employee ID
 const generateEmployeeId = () => {
@@ -184,20 +184,25 @@ const employeesSlice = createSlice({
 export const { setSearchQuery, setGenderFilter, setStatusFilter, clearFilters } = employeesSlice.actions;
 
 // Selectors
-export const selectFilteredEmployees = (state) => {
-    const { employees, filters } = state.employees;
-    const { searchQuery, genderFilter, statusFilter } = filters;
+const selectEmployees = (state) => state.employees.employees;
+const selectFilters = (state) => state.employees.filters;
 
-    return employees.filter((emp) => {
-        const matchesSearch = emp.fullName.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesGender = genderFilter === 'all' || emp.gender === genderFilter;
-        const matchesStatus =
-            statusFilter === 'all' ||
-            (statusFilter === 'active' && emp.isActive) ||
-            (statusFilter === 'inactive' && !emp.isActive);
+export const selectFilteredEmployees = createSelector(
+    [selectEmployees, selectFilters],
+    (employees, filters) => {
+        const { searchQuery, genderFilter, statusFilter } = filters;
 
-        return matchesSearch && matchesGender && matchesStatus;
-    });
-};
+        return employees.filter((emp) => {
+            const matchesSearch = emp.fullName.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesGender = genderFilter === 'all' || emp.gender === genderFilter;
+            const matchesStatus =
+                statusFilter === 'all' ||
+                (statusFilter === 'active' && emp.isActive) ||
+                (statusFilter === 'inactive' && !emp.isActive);
+
+            return matchesSearch && matchesGender && matchesStatus;
+        });
+    }
+);
 
 export default employeesSlice.reducer;

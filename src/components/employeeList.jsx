@@ -14,7 +14,7 @@ import { format } from 'date-fns';
 const EmployeeList = ({ onEdit }) => {
     const dispatch = useDispatch();
     const filteredEmployees = useSelector(selectFilteredEmployees);
-    const { loading, filters } = useSelector((state) => state.employees);
+    const { loading, error, filters } = useSelector((state) => state.employees);
     const { searchQuery, genderFilter, statusFilter } = filters;
 
     const handleDelete = (id) => {
@@ -67,6 +67,21 @@ const EmployeeList = ({ onEdit }) => {
             <div className="card animate-pulse">
                 <div className="h-16 bg-dark-700 rounded-lg mb-6"></div>
                 <div className="h-96 bg-dark-700 rounded-lg"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="card border-red-500/50 bg-red-500/10 text-center py-8">
+                <div className="text-red-400 text-xl font-semibold mb-2">Error Loading Employees</div>
+                <p className="text-gray-400">{error}</p>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="mt-4 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
+                >
+                    Retry
+                </button>
             </div>
         );
     }
@@ -208,8 +223,8 @@ const EmployeeList = ({ onEdit }) => {
                                             <button
                                                 onClick={() => handleToggleStatus(employee)}
                                                 className={`no-print px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 hover:scale-105 ${employee.isActive
-                                                        ? 'bg-green-500/10 border border-green-500/30 text-green-400 hover:bg-green-500/20'
-                                                        : 'bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20'
+                                                    ? 'bg-green-500/10 border border-green-500/30 text-green-400 hover:bg-green-500/20'
+                                                    : 'bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20'
                                                     }`}
                                             >
                                                 {employee.isActive ? 'Active' : 'Inactive'}
